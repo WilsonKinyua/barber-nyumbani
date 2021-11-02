@@ -123,3 +123,105 @@ class ServiceDetail(APIView):  # get service by id
         service = self.get_object(pk)
         service.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# barbers ====================================
+class BarberList(APIView):  # list all barbers
+    """
+    List all barbers.
+    """
+    permission_classes = (IsAdminOrReadOnly,)
+
+    def get(self, request, format=None):  # get all barbers
+        barbers = Barber.objects.all()
+        serializer = BarberSerializer(barbers, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):  # create barber
+        serializer = BarberCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BarberDetail(APIView):  # get barber by id
+    """
+    Retrieve, update or delete a barber instance.
+    """
+    permission_classes = (IsAdminOrReadOnly,)
+
+    def get_object(self, pk):
+        try:
+            return Barber.objects.get(pk=pk)
+        except Barber.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        barber = self.get_object(pk)
+        serializer = BarberSerializer(barber)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        barber = self.get_object(pk)
+        serializer = BarberSerializer(barber, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        barber = self.get_object(pk)
+        barber.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# appointments ====================================
+class AppointmentList(APIView):  # list all appointments
+    """
+    List all appointments.
+    """
+    permission_classes = (IsAdminOrReadOnly,)
+
+    def get(self, request, format=None):  # get all appointments
+        appointments = Appointment.objects.all()
+        serializer = AppointmentSerializer(appointments, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):  # create appointment
+        serializer = AppointmentCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AppointmentDetail(APIView):  # get appointment by id
+    """
+    Retrieve, update or delete a appointment instance.
+    """
+    permission_classes = (IsAdminOrReadOnly,)
+
+    def get_object(self, pk):
+        try:
+            return Appointment.objects.get(pk=pk)
+        except Appointment.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        appointment = self.get_object(pk)
+        serializer = AppointmentSerializer(appointment)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        appointment = self.get_object(pk)
+        serializer = AppointmentSerializer(appointment, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        appointment = self.get_object(pk)
+        appointment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

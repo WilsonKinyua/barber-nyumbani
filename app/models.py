@@ -23,7 +23,7 @@ class Barber(models.Model):
     phone = models.CharField(max_length=200, blank=True, null=True)
     address = models.CharField(max_length=200, blank=True, null=True)
     image = CloudinaryField('image', blank=True, null=True)
-    services = models.ManyToManyField(Service)
+    services = models.ManyToManyField(Service, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -36,8 +36,7 @@ class Appointment(models.Model):
     phone = models.CharField(max_length=200)
     barber = models.ForeignKey(Barber, on_delete=models.CASCADE)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    booking_date = models.DateField(default=dt.date.today)
-    booking_time = models.TimeField(default=dt.datetime.now)
+    date = models.DateField(default=dt.date.today)
     # reschedule_date = models.DateField(default=dt.date.today)
     # reschedule_time = models.TimeField(default=dt.datetime.now)
     status = models.CharField(max_length=200, default=0)
