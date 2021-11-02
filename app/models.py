@@ -29,7 +29,6 @@ class Barber(models.Model):
         return self.name
 
 
-
 # appointment model
 class Appointment(models.Model):
     name = models.CharField(max_length=200)
