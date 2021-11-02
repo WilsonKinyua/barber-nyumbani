@@ -8,6 +8,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
 
+from decouple import config, Csv
+
+
 # api
 from django.http import JsonResponse
 from rest_framework import status
@@ -16,6 +19,18 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializer import UserSerializer, UserCreateSerializer, ServiceSerializer, ServiceCreateSerializer, BarberSerializer, BarberCreateSerializer, AppointmentSerializer, AppointmentCreateSerializer
 from .permissions import IsAdminOrReadOnly
+
+
+# sending of sms messages
+import africastalking
+
+username = config('AFRICASTALKING_USERNAME')
+api_key = config('AFRICASTALKING_API_KEY')
+
+africastalking.initialize(username, api_key)
+
+# Initialize the SMS service
+sms = africastalking.SMS
 
 
 def index(request):
@@ -183,6 +198,12 @@ class AppointmentList(APIView):  # list all appointments
     """
     permission_classes = (IsAdminOrReadOnly,)
 
+    # show either error message for sending sms or success message
+    def on_finish(error, response):
+        if error is not None:
+            raise error
+        print(response)
+
     def get(self, request, format=None):  # get all appointments
         appointments = Appointment.objects.all()
         serializer = AppointmentSerializer(appointments, many=True)
@@ -192,6 +213,10 @@ class AppointmentList(APIView):  # list all appointments
         serializer = AppointmentCreateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            # get the phone number from the appointment and send sms
+            phone_number = serializer.data['phone']
+            message = "Hey there, Your appointment has been created. You will receive a confirmation message shortly."
+            sms.send(message, [phone_number], callback=self.on_finish)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
