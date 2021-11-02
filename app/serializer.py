@@ -69,15 +69,29 @@ class BarberCreateSerializer(serializers.ModelSerializer):
 class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
-        fields = ('id', 'name', 'email', 'phone', 'date', 'barber', 'service', 'status', 'created_at')
+        fields = ('id', 'name', 'email', 'phone', 'date',
+                  'barber', 'service', 'status', 'created_at')
 
 
 # create appointment
 class AppointmentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
-        fields = ('id', 'name', 'email', 'phone', 'date', 'barber', 'service', 'status', 'created_at')
+        fields = ('id', 'name', 'email', 'phone', 'date',
+                  'barber', 'service', 'status', 'created_at')
 
     def create(self, validated_data):
         appointment = Appointment.objects.create(**validated_data)
         return appointment
+
+
+# approve appointment and set status to 1
+class ApproveAppointmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = ('id', 'phone', 'status')
+
+    def update(self, instance, validated_data):
+        instance.status = 1
+        instance.save()
+        return instance

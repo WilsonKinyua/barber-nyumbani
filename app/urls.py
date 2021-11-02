@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^api/barbers/(?P<pk>[0-9]+)/$', views.BarberDetail.as_view()), # barber detail
     url(r'^api/appointments/$', views.AppointmentList.as_view()),  # list of appointments
     url(r'^api/appointments/(?P<pk>[0-9]+)/$', views.AppointmentDetail.as_view()), # appointment detail
+    url(r'^api/appointments/(?P<pk>[0-9]+)/approve/$', views.ApproveAppointmentView.as_view()), # approve appointment
 ]

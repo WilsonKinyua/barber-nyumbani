@@ -17,7 +17,7 @@ from rest_framework import status
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializer import UserSerializer, UserCreateSerializer, ServiceSerializer, ServiceCreateSerializer, BarberSerializer, BarberCreateSerializer, AppointmentSerializer, AppointmentCreateSerializer
+from .serializer import UserSerializer, UserCreateSerializer, ServiceSerializer, ServiceCreateSerializer, BarberSerializer, BarberCreateSerializer, AppointmentSerializer, AppointmentCreateSerializer, ApproveAppointmentSerializer
 from .permissions import IsAdminOrReadOnly
 
 
@@ -217,6 +217,9 @@ class AppointmentList(APIView):  # list all appointments
             phone_number = serializer.data['phone']
             message = "Hey there, Your appointment has been created. You will receive a confirmation message shortly."
             sms.send(message, [phone_number], callback=self.on_finish)
+            # get the admin phone number and send sms ============================
+            # admin_phone_number = User.objects.get(username='admin').phone
+            # sms.send("New appointment created ", [admin_phone_number], callback=self.on_finish)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -250,3 +253,36 @@ class AppointmentDetail(APIView):  # get appointment by id
         appointment = self.get_object(pk)
         appointment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# approve appointment ====================================
+class ApproveAppointmentView(APIView):  # get appointment by id
+    """
+    update appointment instance.
+    """
+    permission_classes = (IsAdminOrReadOnly,)
+
+    # show either error message for sending sms or success message
+    def on_finish(error, response):
+        if error is not None:
+            raise error
+        print(response)
+
+    def get_object(self, pk):
+        try:
+            return Appointment.objects.get(pk=pk)
+        except Appointment.DoesNotExist:
+            raise Http404
+
+    def put(self, request, pk, format=None):
+        appointment = self.get_object(pk)
+        serializer = ApproveAppointmentSerializer(
+            appointment, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            # get the phone number from the appointment and send sms
+            phone_number = serializer.data['phone']
+            message = "Hey there, Your appointment has been approved."
+            sms.send(message, [phone_number], callback=self.on_finish)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
