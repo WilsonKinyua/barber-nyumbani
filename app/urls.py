@@ -9,4 +9,6 @@ urlpatterns = [
     url(r'^api/users/create/$', views.UserCreate.as_view()),  # create user
     url(r'^api/auth/login/$', views.loginUser.as_view()),  # login user
     url(r'^api/auth/logout/$', views.logoutUser.as_view()),  # logout user
+    url(r'^api/services/$', views.ServiceList.as_view()),  # list of services
+    url(r'^api/services/(?P<pk>[0-9]+)/$', views.ServiceDetail.as_view()),
 ]

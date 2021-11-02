@@ -25,9 +25,9 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 schema_view = get_schema_view(
     openapi.Info(
-        title="Barber Nyumbani",
+        title="Barber Nyumbani 😃",
         default_version='v1',
-        description="Test description",
+        description="A simple restful api for a barber shop",
         terms_of_service="https://www.ourapp.com/policies/terms/",
         contact=openapi.Contact(email="wilson@developerwilson.com"),
         license=openapi.License(name="Test License"),

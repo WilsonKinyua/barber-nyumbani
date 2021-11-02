@@ -43,3 +43,43 @@ class ServiceCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         service = Service.objects.create(**validated_data)
         return service
+
+
+# get all barbers
+class BarberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Barber
+        fields = ('id', 'name', 'email', 'phone',
+                  'address' 'image', 'services')
+
+
+# create barber
+class BarberCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Barber
+        fields = ('id', 'name', 'email', 'phone',
+                  'address', 'image', 'services')
+
+    def create(self, validated_data):
+        barber = Barber.objects.create(**validated_data)
+        return barber
+
+
+# get all appointments
+class AppointmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = ('id', 'name', 'email', 'phone', 'booking_date',
+                  'booking_time', 'barber', 'service', 'status', 'created_at')
+
+
+# create appointment
+class AppointmentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = ('id', 'name', 'email', 'phone', 'booking_date',
+                  'booking_time', 'barber', 'service', 'status', 'created_at')
+
+    def create(self, validated_data):
+        appointment = Appointment.objects.create(**validated_data)
+        return appointment
