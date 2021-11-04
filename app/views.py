@@ -280,8 +280,10 @@ class ApproveAppointmentView(APIView):  # get appointment by id
             appointment, data=request.data)
         if serializer.is_valid():
             serializer.save()
+            # loop through all the appointments and get the one with the same id
+            the_appointment = Appointment.objects.get(pk=pk)
             # get the phone number from the appointment and send sms
-            phone_number = serializer.data['phone']
+            phone_number = the_appointment.phone
             message = "Hey there, Your appointment has been approved."
             sms.send(message, [phone_number], callback=self.on_finish)
             return Response(serializer.data)

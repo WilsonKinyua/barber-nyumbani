@@ -89,7 +89,7 @@ class AppointmentCreateSerializer(serializers.ModelSerializer):
 class ApproveAppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
-        fields = ('id', 'phone', 'status')
+        fields = ('id', 'status')
 
     def update(self, instance, validated_data):
         instance.status = 1
